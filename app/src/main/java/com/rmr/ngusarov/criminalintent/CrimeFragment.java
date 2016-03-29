@@ -1,6 +1,9 @@
 package com.rmr.ngusarov.criminalintent;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,6 +22,8 @@ import java.util.UUID;
 public class CrimeFragment extends Fragment {
 
     public static final String EXTRA_CRIME_ID = "com.rmr.ngusarov.criminalintent.crime_id";
+    public static final String DIALOG_DATE = "date";
+    public static final int REQUEST_DATE = 0;
 
     private EditText mEditText;
     private CheckBox mSolvedCheckBox;
@@ -58,11 +63,17 @@ public class CrimeFragment extends Fragment {
         });
 
         mDateButton = (Button) v.findViewById(R.id.crime_date);
-        Date crimeDate = mCrime.getDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy, HH:mm");
-        String formatDate = sdf.format(crimeDate);
-        mDateButton.setText(formatDate);
-        mDateButton.setEnabled(false);
+        updateDateOnButton(mCrime.getDate());
+        mDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getActivity().getFragmentManager();
+                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+                //TODO this have a problem with app.Fragment (v4.Fragment ok) Status: OK!
+                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
+                dialog.show(fm, DIALOG_DATE);
+            }
+        });
 
         mSolvedCheckBox = (CheckBox) v.findViewById(R.id.crime_solved);
         mSolvedCheckBox.setChecked(mCrime.isSolved());
@@ -74,6 +85,22 @@ public class CrimeFragment extends Fragment {
         });
 
         return v;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) return;
+        if (requestCode == REQUEST_DATE) {
+            Date d = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrime.setDate(d);
+            updateDateOnButton(d);
+        }
+    }
+
+    public void updateDateOnButton(Date d) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy, HH:mm");
+        String formatDate = sdf.format(d);
+        mDateButton.setText(formatDate);
     }
 
     public static CrimeFragment newInstance(UUID crimeId) {
