@@ -14,18 +14,24 @@ import android.widget.EditText;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
 
-    private Crime mCrime;
+    public static final String EXTRA_CRIME_ID = "com.rmr.ngusarov.criminalintent.crime_id";
+
     private EditText mEditText;
     private CheckBox mSolvedCheckBox;
     private Button mDateButton;
+    private Crime mCrime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCrime = new Crime();
+
+        UUID crimeId = (UUID)getArguments().getSerializable(EXTRA_CRIME_ID);
+        mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
+
     }
 
     @Override
@@ -33,6 +39,7 @@ public class CrimeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_crime, parent, false);
 
         mEditText = (EditText) v.findViewById(R.id.crime_title);
+        mEditText.setText(mCrime.getTitle());
         mEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -52,12 +59,13 @@ public class CrimeFragment extends Fragment {
 
         mDateButton = (Button) v.findViewById(R.id.crime_date);
         Date crimeDate = mCrime.getDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy, HH:mm");
         String formatDate = sdf.format(crimeDate);
         mDateButton.setText(formatDate);
         mDateButton.setEnabled(false);
 
         mSolvedCheckBox = (CheckBox) v.findViewById(R.id.crime_solved);
+        mSolvedCheckBox.setChecked(mCrime.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -65,10 +73,15 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-
-
         return v;
     }
 
+    public static CrimeFragment newInstance(UUID crimeId) {
+        Bundle args = new Bundle();
+        args.putSerializable(EXTRA_CRIME_ID, crimeId);
+        CrimeFragment fragment = new CrimeFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
 }

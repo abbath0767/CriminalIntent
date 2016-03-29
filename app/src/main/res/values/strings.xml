@@ -5,5 +5,5 @@
     <string name="crime_tittle_label">TITLE</string>
     <string name="crime_detals_label">DETALS</string>
     <string name="crime_solved_label">Solved</string>
-    <string name="crimes_title">Crimes</string>
+    <string name="crimes_title">Crimes List</string>
 </resources>
