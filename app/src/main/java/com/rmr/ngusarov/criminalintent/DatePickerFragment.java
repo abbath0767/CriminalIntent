@@ -57,7 +57,6 @@ public class DatePickerFragment extends DialogFragment {
         i.putExtra(EXTRA_DATE, mDate);
 
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
-
     }
 
     public static DatePickerFragment newInstance(Date date) {

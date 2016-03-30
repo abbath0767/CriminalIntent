@@ -68,10 +68,12 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getActivity().getFragmentManager();
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
-                //TODO this have a problem with app.Fragment (v4.Fragment ok) Status: OK!
+                DateAndTimeDialog dialog = DateAndTimeDialog.newInstance(mCrime.getDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 dialog.show(fm, DIALOG_DATE);
+                //DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+//                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
+//                dialog.show(fm, DIALOG_DATE);
             }
         });
 
