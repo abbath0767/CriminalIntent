@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +37,6 @@ public class DateFragment extends Fragment {
                 mYear = year;
                 mDay = dayOfMonth;
                 mMonth = monthOfYear;
-//                getArguments().putInt(DATE + "y", year);
-//                getArguments().putInt(DATE + "m", monthOfYear);
-//                getArguments().putInt(DATE + "d", dayOfMonth);
                 sendResult(Activity.RESULT_OK);
             }
         });
@@ -64,9 +60,6 @@ public class DateFragment extends Fragment {
         i.putExtra(DATE + "y", mYear);
         i.putExtra(DATE + "m", mMonth);
         i.putExtra(DATE + "d", mDay);
-        Log.d(CrimeListFragment.TAG, " send result year = " + mYear);
-        Log.d(CrimeListFragment.TAG, " send result m = " + mMonth);
-        Log.d(CrimeListFragment.TAG, " send result d= " + mDay);
 
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
     }

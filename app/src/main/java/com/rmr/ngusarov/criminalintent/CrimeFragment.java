@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,6 +96,7 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             Date d = (Date) data.getSerializableExtra(DateAndTimeDialog.EXTRA_DATE);
             mCrime.setDate(d);
+            Log.d(CrimeListFragment.TAG, "Date after  = " + mCrime.getDate());
             updateDateOnButton(d);
         }
     }

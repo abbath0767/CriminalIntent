@@ -39,7 +39,7 @@ public class TimeFragment extends Fragment{
         View v =inflater.inflate(R.layout.time_fragment, container, false);
 
         mTimePicker = (TimePicker) v.findViewById(R.id.time_picker);
-        mTimePicker.is24HourView();
+        mTimePicker.setIs24HourView(true);
         mTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
