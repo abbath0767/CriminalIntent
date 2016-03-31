@@ -1,33 +1,28 @@
 package com.rmr.ngusarov.criminalintent;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 public class DateFragment extends Fragment {
 
     public static final String DATE = "date";
-    private Date mDate;
-    private int year;
-    private int month;
-    private int day;
+    private int mYear;
+    private int mMonth;
+    private int mDay;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDate = (Date) getArguments().getSerializable(DateAndTimeDialog.EXTRA_DATE);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(mDate);
-        year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
+        mYear = getArguments().getInt("year");
+        mMonth = getArguments().getInt("month");
+        mDay = getArguments().getInt("day");
     }
 
     @Override
@@ -35,27 +30,44 @@ public class DateFragment extends Fragment {
         View v = inflater.inflate(R.layout.date_fragment, container, false);
 
         DatePicker datePicker = (DatePicker) v.findViewById(R.id.date_picker);
-        datePicker.init(year, month, day, new DatePicker.OnDateChangedListener() {
+        datePicker.init(mYear, mMonth, mDay, new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                mDate = new GregorianCalendar(year, monthOfYear, dayOfMonth).getTime();
-                getArguments().putSerializable(DateAndTimeDialog.EXTRA_DATE, mDate);
+//                getArguments().putSerializable(DateAndTimeDialog.EXTRA_DATE, mDate);
+                //TODO meed debug
+                mYear = year;
+                mDay = dayOfMonth;
+                mMonth = monthOfYear;
+//                getArguments().putInt(DATE + "y", year);
+//                getArguments().putInt(DATE + "m", monthOfYear);
+//                getArguments().putInt(DATE + "d", dayOfMonth);
+                sendResult(Activity.RESULT_OK);
             }
         });
 
         return v;
     }
 
-    public static DateFragment newInstance(Date date) {
+    public static DateFragment newInstance(int year, int month, int day) {
         DateFragment fragment = new DateFragment();
         Bundle args = new Bundle();
-        args.putSerializable(DateAndTimeDialog.EXTRA_DATE, date);
+        args.putInt("year", year);
+        args.putInt("month", month);
+        args.putInt("day", day);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public Date getDate() {
-        return mDate;
-    }
+    public void sendResult(int resultCode) {
+        if (getTargetFragment() == null) return;
+        Intent i = new Intent();
+        i.putExtra(DATE + "y", mYear);
+        i.putExtra(DATE + "m", mMonth);
+        i.putExtra(DATE + "d", mDay);
+        Log.d(CrimeListFragment.TAG, " send result year = " + mYear);
+        Log.d(CrimeListFragment.TAG, " send result m = " + mMonth);
+        Log.d(CrimeListFragment.TAG, " send result d= " + mDay);
 
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
+    }
 }

@@ -1,6 +1,8 @@
 package com.rmr.ngusarov.criminalintent;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +11,12 @@ import android.widget.TimePicker;
 
 public class TimeFragment extends Fragment{
 
+    public static final String TIME = "time";
+
     private TimePicker mTimePicker;
 
-    private int hour;
-    private int minute;
+    private int mHour;
+    private int mMinute;
 
     public static TimeFragment newInstance(int hour, int minute) {
         TimeFragment fragment = new TimeFragment();
@@ -26,8 +30,8 @@ public class TimeFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hour = getArguments().getInt("hour");
-        minute = getArguments().getInt("minute");
+        mHour = getArguments().getInt("hour");
+        mMinute = getArguments().getInt("minute");
     }
 
     @Override
@@ -36,9 +40,24 @@ public class TimeFragment extends Fragment{
 
         mTimePicker = (TimePicker) v.findViewById(R.id.time_picker);
         mTimePicker.is24HourView();
-
-
+        mTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                mHour = hourOfDay;
+                mMinute = minute;
+                sendResult(Activity.RESULT_OK);
+            }
+        });
 
         return v;
+    }
+
+    public void sendResult(int resultCode) {
+        if (getTargetFragment() == null) return;
+        Intent i = new Intent();
+        i.putExtra(TIME + "h", mHour);
+        i.putExtra(TIME + "m", mMinute);
+
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
     }
 }

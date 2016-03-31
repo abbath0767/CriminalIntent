@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,19 @@ import java.util.List;
 public class DateAndTimeDialog extends DialogFragment{
 
     public static final String EXTRA_DATE = "com.rmr.ngusarov.criminalintent.date";
+    public static final int EXTRA_REQUEST_DATE = 1;
+    public static final int EXTRA_REQUEST_TIME = 2;
+
 
     private Date mDate;
     private PagerAdapter adapter;
     private Button mButtonOk;
+
+    private int year;
+    private int month;
+    private int day;
+    private int hour;
+    private int minute;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,11 +42,11 @@ public class DateAndTimeDialog extends DialogFragment{
         mDate = (Date) getArguments().getSerializable(EXTRA_DATE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(mDate);
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        hour = calendar.get(Calendar.HOUR_OF_DAY);
+        minute = calendar.get(Calendar.MINUTE);
     }
 
     @Override
@@ -55,12 +65,6 @@ public class DateAndTimeDialog extends DialogFragment{
 //            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 //                DateFragment df = (DateFragment) getFragments().get(position);
 //                if (df != null) {
-//                    Date saved = df.getDate();
-//                    mDate.setYear(saved.getYear());
-//                    mDate.setMonth(saved.getMonth());
-//                    mDate.setDate(saved.getDay());
-//                    mDate.setHours(saved.getHours());
-//                    mDate.setMinutes(saved.getMinutes());
 //                }
 //            }
 //            @Override
@@ -75,13 +79,43 @@ public class DateAndTimeDialog extends DialogFragment{
         mButtonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendResult(Activity.RESULT_OK);
+                sendResult(1);
+                //todo need debug
+                getDialog().dismiss();
+                dismiss();
             }
         });
 
         return view;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            Log.d(CrimeListFragment.TAG, " send result result code = " + resultCode);
+            Log.d(CrimeListFragment.TAG, " send result result code a = " + Activity.RESULT_OK);
+            return;
+        }
+        //todo need debug
+        if (requestCode == EXTRA_REQUEST_DATE) {
+            year = data.getIntExtra(DateFragment.DATE + "y", 2007);
+            month = data.getIntExtra(DateFragment.DATE + "m", 7);
+            day = data.getIntExtra(DateFragment.DATE + "d", 7);
+            Log.d(CrimeListFragment.TAG, " on result year = " + year);
+            Log.d(CrimeListFragment.TAG, " on result month = " + month);
+            Log.d(CrimeListFragment.TAG, " on result dday = " + day);
+            mDate.setYear(year);
+            Log.d(CrimeListFragment.TAG, " on result mDate after date= " + mDate);
+        }
+        if (requestCode == EXTRA_REQUEST_TIME) {
+            hour = data.getIntExtra(TimeFragment.TIME + "h", 7);
+            minute = data.getIntExtra(TimeFragment.TIME + "m", 7);
+            Log.d(CrimeListFragment.TAG, " on result hour = " + hour);
+            Log.d(CrimeListFragment.TAG, " on result minute= " + minute);
+            mDate.setHours(hour);
+            Log.d(CrimeListFragment.TAG, " on result mDate af ter time = " + mDate);
+        }
+    }
 
     private void sendResult(int resultCode) {
         if (getTargetFragment() == null)
@@ -94,8 +128,11 @@ public class DateAndTimeDialog extends DialogFragment{
 
     private List getFragments() {
         List list = new ArrayList();
-        DateFragment df = DateFragment.newInstance(mDate);
+        Log.d(CrimeListFragment.TAG, "mDate = " + mDate);
+        DateFragment df = DateFragment.newInstance(year, month, day);
+        df.setTargetFragment(DateAndTimeDialog.this, EXTRA_REQUEST_DATE);
         TimeFragment rf = TimeFragment.newInstance(mDate.getHours(), mDate.getMinutes());
+        rf.setTargetFragment(DateAndTimeDialog.this, EXTRA_REQUEST_TIME);
         list.add(df);
         list.add(rf);
         return list;
