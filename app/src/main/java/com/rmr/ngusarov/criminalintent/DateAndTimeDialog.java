@@ -53,6 +53,8 @@ public class DateAndTimeDialog extends DialogFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_fragment, container);
 
+        getDialog().setTitle(R.string.date_picker_title);
+
         mButtonOk = (Button) view.findViewById(R.id.dialog_button_ok);
 
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);

@@ -44,6 +44,8 @@ public class CrimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_crime, parent, false);
 
+        getActivity().setTitle("Crime");
+
         mEditText = (EditText) v.findViewById(R.id.crime_title);
         mEditText.setText(mCrime.getTitle());
         mEditText.addTextChangedListener(new TextWatcher() {
