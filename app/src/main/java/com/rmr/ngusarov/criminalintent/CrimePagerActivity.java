@@ -3,6 +3,7 @@ package com.rmr.ngusarov.criminalintent;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ public class CrimePagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mViewPager = new ViewPager(this);
+        //todo !!!!!! SET ID NOT GET ID
         mViewPager.setId(R.id.viewPager);
         setContentView(mViewPager);
 
@@ -26,6 +28,12 @@ public class CrimePagerActivity extends AppCompatActivity {
 
         FragmentManager fm = getFragmentManager();
         mViewPager.setAdapter(new FragmentPagerAdapter(fm) {
+            //remove bug with change orientation in dialog
+            @Override
+            public Parcelable saveState() {
+                return null;
+            }
+
             @Override
             public Fragment getItem(int position) {
                 Crime c = mCrimes.get(position);
@@ -59,6 +67,5 @@ public class CrimePagerActivity extends AppCompatActivity {
         });
 
     }
-
 
 }

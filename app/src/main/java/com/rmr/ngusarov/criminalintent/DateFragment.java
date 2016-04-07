@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,18 +23,27 @@ public class DateFragment extends Fragment {
         mYear = getArguments().getInt("year");
         mMonth = getArguments().getInt("month");
         mDay = getArguments().getInt("day");
+        Log.d(CrimeListFragment.TAG, "onCreate DateFragment ");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.date_fragment, container, false);
 
+        Log.d(CrimeListFragment.TAG, "onCreateView DateFragment ");
+
         DatePicker datePicker = (DatePicker) v.findViewById(R.id.date_picker);
+        Log.d(CrimeListFragment.TAG, "onCreateView DateFragment year = " + mYear);
+        Log.d(CrimeListFragment.TAG, "onCreateView DateFragment month = " + mMonth);
+        Log.d(CrimeListFragment.TAG, "onCreateView DateFragment day = " + mDay);
         datePicker.init(mYear, mMonth, mDay, new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 //                getArguments().putSerializable(DateAndTimeDialog.EXTRA_DATE, mDate);
                 //TODO meed debug
+                Log.d(CrimeListFragment.TAG, "onCreateView DateFragment init year = " + year);
+                Log.d(CrimeListFragment.TAG, "onCreateView DateFragment init month = " + monthOfYear);
+                Log.d(CrimeListFragment.TAG, "onCreateView DateFragment init day = " + dayOfMonth);
                 mYear = year;
                 mDay = dayOfMonth;
                 mMonth = monthOfYear;
@@ -60,6 +70,8 @@ public class DateFragment extends Fragment {
         i.putExtra(DATE + "y", mYear);
         i.putExtra(DATE + "m", mMonth);
         i.putExtra(DATE + "d", mDay);
+
+        Log.d(CrimeListFragment.TAG, "result code DF = " + resultCode);
 
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
     }

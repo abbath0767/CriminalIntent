@@ -93,6 +93,8 @@ public class DateAndTimeDialog extends DialogFragment{
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(CrimeListFragment.TAG, "result code DTD= " + resultCode);
+
         if (resultCode != Activity.RESULT_OK) {
             return;
         }

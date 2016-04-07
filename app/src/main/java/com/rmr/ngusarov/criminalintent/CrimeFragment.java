@@ -37,7 +37,6 @@ public class CrimeFragment extends Fragment {
 
         UUID crimeId = (UUID)getArguments().getSerializable(EXTRA_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
-
     }
 
     @Override
@@ -51,12 +50,12 @@ public class CrimeFragment extends Fragment {
         mEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                mCrime.setTitle(s.toString());
+                //void field
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //void field ..
+                mCrime.setTitle(s.toString());
             }
 
             @Override
