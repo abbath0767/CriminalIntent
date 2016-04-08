@@ -73,6 +73,7 @@ public class CrimeListFragment extends ListFragment {
                             for (int i = adapter.getCount() - 1; i >= 0; i--) {
                                 if (getListView().isItemChecked(i)) {
                                     crimeLab.deleteCrime(adapter.getItem(i));
+                                    crimeLab.saveCrimes();
                                 }
                             }
                             mode.finish();

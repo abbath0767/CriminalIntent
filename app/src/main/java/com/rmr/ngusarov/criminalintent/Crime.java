@@ -1,5 +1,7 @@
 package com.rmr.ngusarov.criminalintent;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,7 +20,6 @@ public class Crime {
     private boolean mSolved;
 
     public Crime() {
-        //Generate random unique identificator
         mId = UUID.randomUUID();
         mDate = new Date();
     }
@@ -58,7 +59,13 @@ public class Crime {
 
     public Crime(JSONObject json) throws JSONException {
         mId = UUID.fromString(json.getString(JSON_ID));
-        mTitle = json.getString(JSON_TITLE);
+        //if tittle = null
+        try {
+            mTitle = json.getString(JSON_TITLE);
+        } catch (Exception e) {
+            mTitle = "Crime id=" + this.mId.toString().substring(0, 10);
+            Log.d(CrimeListFragment.TAG, "mTittle empty, set default = " + mTitle);
+        }
         mSolved = json.getBoolean(JSON_SOLVED);
         mDate = new Date(json.getLong(JSON_DATE));
     }
