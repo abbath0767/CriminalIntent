@@ -40,7 +40,7 @@ public class DateFragment extends Fragment {
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 //                getArguments().putSerializable(DateAndTimeDialog.EXTRA_DATE, mDate);
-                //TODO meed debug
+                //TODO need debug
                 Log.d(CrimeListFragment.TAG, "onCreateView DateFragment init year = " + year);
                 Log.d(CrimeListFragment.TAG, "onCreateView DateFragment init month = " + monthOfYear);
                 Log.d(CrimeListFragment.TAG, "onCreateView DateFragment init day = " + dayOfMonth);

@@ -3,13 +3,16 @@ package com.rmr.ngusarov.criminalintent;
 import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,8 +23,35 @@ import java.util.Date;
 
 public class CrimeListFragment extends ListFragment {
     public static final String TAG = "myTag";
+    private boolean mSubtitleVisible;
+    private Button mNewCrimeButton;
 
     private ArrayList<Crime> mCrimes;
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent,
+                             Bundle savedInstanceState) {
+
+        View v = inflater.inflate(R.layout.empty_list_item_stub, parent, false);
+
+
+        ListView view = (ListView) v.findViewById(android.R.id.list);
+        view.setEmptyView(v.findViewById(android.R.id.empty));
+
+        mNewCrimeButton = (Button) v.findViewById(R.id.button_add_crime);
+        mNewCrimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Crime crime = new Crime();
+                Log.d(TAG, "new Crime created, UUID = " + crime.getId());
+                CrimeLab.get(getActivity()).addCrime(crime);
+                Intent i = new Intent(getActivity(), CrimePagerActivity.class);
+                i.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
+                startActivityForResult(i, 0);
+            }
+        });
+
+        return v;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,6 +66,9 @@ public class CrimeListFragment extends ListFragment {
         CrimeAdapter cAdapter = new CrimeAdapter(mCrimes);
 
         setListAdapter(cAdapter);
+
+        setRetainInstance(true);
+        mSubtitleVisible = false;
     }
 
     @Override
@@ -69,6 +102,17 @@ public class CrimeListFragment extends ListFragment {
                 Intent i = new Intent(getActivity(), CrimePagerActivity.class);
                 i.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
                 startActivityForResult(i, 0);
+                return true;
+            case R.id.menu_item_show_subtitle:
+                if (((AppCompatActivity) getActivity()).getSupportActionBar().getSubtitle() == null) {
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(R.string.subtitle);
+                    item.setTitle(R.string.hide_subtitle);
+                    mSubtitleVisible = true;
+                } else {
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+                    item.setTitle(R.string.show_subtitle);
+                    mSubtitleVisible = false;
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

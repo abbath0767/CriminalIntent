@@ -5,7 +5,9 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -18,6 +20,10 @@ public class CrimePagerActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (NavUtils.getParentActivityName(this) != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
         mViewPager = new ViewPager(this);
         //todo !!!!!! SET ID NOT GET ID
@@ -67,5 +73,4 @@ public class CrimePagerActivity extends AppCompatActivity {
         });
 
     }
-
 }
