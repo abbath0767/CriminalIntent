@@ -139,6 +139,9 @@ public class CrimeFragment extends Fragment {
         switch(item.getItemId()) {
             case android.R.id.home:
                 if (NavUtils.getParentActivityName(getActivity()) != null)
+                    //set default title
+                    if (mCrime.getTitle() == null || mCrime.getTitle().equals(""))
+                        mCrime.setTitle("Crime id=" + mCrime.getId().toString().substring(0, 10));
                     NavUtils.navigateUpFromSameTask(getActivity());
                 return true;
             case R.id.menu_item_delete_crime_in_crime:

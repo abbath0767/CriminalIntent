@@ -159,7 +159,7 @@ public class CrimeListFragment extends ListFragment {
                 return true;
             case R.id.menu_item_show_subtitle:
                 if (((AppCompatActivity) getActivity()).getSupportActionBar().getSubtitle() == null) {
-                    ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(R.string.subtitle);
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle("Crime count = " + mCrimes.size());
                     item.setTitle(R.string.hide_subtitle);
                     mSubtitleVisible = true;
                 } else {
