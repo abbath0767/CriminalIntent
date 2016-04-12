@@ -112,7 +112,7 @@ public class CrimeListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(R.string.crimes_title);
         setHasOptionsMenu(true);
-
+        //todo ???
         getActivity().setTitle(R.string.title_activity_crime);
 
         mCrimes = CrimeLab.get(getActivity()).getCrimes();
