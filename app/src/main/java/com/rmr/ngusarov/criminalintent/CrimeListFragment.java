@@ -83,6 +83,7 @@ public class CrimeListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(CrimeListFragment.TAG, "mCrimes length = " + mCrimes.size());
         ((CrimeAdapter)getListAdapter()).notifyDataSetChanged();
     }
 

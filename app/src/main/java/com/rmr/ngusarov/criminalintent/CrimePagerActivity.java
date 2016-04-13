@@ -25,6 +25,7 @@ public class CrimePagerActivity extends AppCompatActivity {
         if (NavUtils.getParentActivityName(this) != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
 
+
         mViewPager = new ViewPager(this);
         //todo !!!!!! SET ID NOT GET ID
         mViewPager.setId(R.id.viewPager);

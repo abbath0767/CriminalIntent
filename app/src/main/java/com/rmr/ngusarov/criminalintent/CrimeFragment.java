@@ -10,6 +10,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +43,7 @@ public class CrimeFragment extends Fragment {
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
 
         setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -101,7 +104,6 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             Date d = (Date) data.getSerializableExtra(DateAndTimeDialog.EXTRA_DATE);
             mCrime.setDate(d);
-            Log.d(CrimeListFragment.TAG, "Date after  = " + mCrime.getDate());
             updateDateOnButton(d);
         }
     }
@@ -121,13 +123,27 @@ public class CrimeFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.add(0, R.id.deleteButtonInBar, 0, R.string.delete_crime).setIcon(R.drawable.ic_delete_crime)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
                 if (NavUtils.getParentActivityName(getActivity()) != null)
+//                    CrimeLab.get(getActivity()).deleteCrime(mCrime);
                     NavUtils.navigateUpFromSameTask(getActivity());
                 return true;
-
+            case R.id.deleteButtonInBar:
+                Log.d(CrimeListFragment.TAG, "delete button tap");
+                CrimeLab.get(getActivity()).deleteCrime(mCrime);
+                if (NavUtils.getParentActivityName(getActivity()) != null)
+//                    CrimeLab.get(getActivity()).deleteCrime(mCrime);
+                    NavUtils.navigateUpFromSameTask(getActivity());
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
