@@ -140,8 +140,8 @@ public class CrimeListFragment extends ListFragment {
             String formatDate = sdf.format(crimeDate);
             dateTextView.setText(formatDate);
 
-            CheckBox solvedChexkBox =(CheckBox) contentView.findViewById(R.id.crime_list_item_solvedCheckBox);
-            solvedChexkBox.setChecked(c.isSolved());
+            CheckBox solvedCheckBox =(CheckBox) contentView.findViewById(R.id.crime_list_item_solvedCheckBox);
+            solvedCheckBox.setChecked(c.isSolved());
 
             return contentView;
         }
