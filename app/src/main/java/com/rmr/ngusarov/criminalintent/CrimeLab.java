@@ -94,7 +94,7 @@ public class CrimeLab {
         return mCrimes;
     }
 
-    private static ContentValues getContentVlues(Crime crime) {
+    private static ContentValues  getContentVlues(Crime crime) {
         ContentValues content = new ContentValues();
         content.put(CrimeTable.Cols.UUID, crime.getId().toString());
         content.put(CrimeTable.Cols.TITLE, crime.getTitle());
