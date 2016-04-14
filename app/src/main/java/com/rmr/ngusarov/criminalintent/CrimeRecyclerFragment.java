@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,7 +38,8 @@ public class CrimeRecyclerFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        getActivity().setTitle(R.string.title_activity_crime);
+//        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -78,12 +80,17 @@ public class CrimeRecyclerFragment extends Fragment{
     }
 
     private void updateUi() {
+        Log.d(CrimeListFragment.TAG, "update UI");
+
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         ArrayList<Crime> mCrimes = crimeLab.getCrimes();
+        Log.d(CrimeListFragment.TAG, "update UI mCrimes = " + mCrimes.size());
         if (mCrimeAdapter == null) {
+            Log.d(CrimeListFragment.TAG, "update UI mCrime adapter = null");
             mCrimeAdapter = new CrimeAdapter(mCrimes);
             mRecyclerView.setAdapter(mCrimeAdapter);
         } else {
+            Log.d(CrimeListFragment.TAG, "update UI else mCrimes = " + mCrimes.size());
             mCrimeAdapter.setCrimes(mCrimes);
             mCrimeAdapter.notifyDataSetChanged();
         }
