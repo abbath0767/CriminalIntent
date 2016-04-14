@@ -136,6 +136,7 @@ public class CrimeFragment extends Fragment {
                 if (NavUtils.getParentActivityName(getActivity()) != null)
 //                    CrimeLab.get(getActivity()).deleteCrime(mCrime);
                     NavUtils.navigateUpFromSameTask(getActivity());
+                getActivity().finish();
                 return true;
             case R.id.deleteButtonInBar:
                 Log.d(CrimeListFragment.TAG, "delete button tap");
@@ -143,6 +144,7 @@ public class CrimeFragment extends Fragment {
                 if (NavUtils.getParentActivityName(getActivity()) != null)
 //                    CrimeLab.get(getActivity()).deleteCrime(mCrime);
                     NavUtils.navigateUpFromSameTask(getActivity());
+                getActivity().finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
