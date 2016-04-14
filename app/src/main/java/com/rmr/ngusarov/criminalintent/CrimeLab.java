@@ -100,6 +100,7 @@ public class CrimeLab {
         content.put(CrimeTable.Cols.TITLE, crime.getTitle());
         content.put(CrimeTable.Cols.DATE, crime.getDate().getTime());
         content.put(CrimeTable.Cols.SOLVED, crime.isSolved() ? 1 : 0);
+        content.put(CrimeTable.Cols.SUSPECT, crime.getSuspect());
 
         return content;
     }

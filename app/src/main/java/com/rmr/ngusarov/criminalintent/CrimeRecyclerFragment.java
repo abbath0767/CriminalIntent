@@ -80,17 +80,13 @@ public class CrimeRecyclerFragment extends Fragment{
     }
 
     private void updateUi() {
-        Log.d(CrimeListFragment.TAG, "update UI");
-
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         ArrayList<Crime> mCrimes = crimeLab.getCrimes();
         Log.d(CrimeListFragment.TAG, "update UI mCrimes = " + mCrimes.size());
         if (mCrimeAdapter == null) {
-            Log.d(CrimeListFragment.TAG, "update UI mCrime adapter = null");
             mCrimeAdapter = new CrimeAdapter(mCrimes);
             mRecyclerView.setAdapter(mCrimeAdapter);
         } else {
-            Log.d(CrimeListFragment.TAG, "update UI else mCrimes = " + mCrimes.size());
             mCrimeAdapter.setCrimes(mCrimes);
             mCrimeAdapter.notifyDataSetChanged();
         }
