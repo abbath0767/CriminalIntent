@@ -1,5 +1,7 @@
 package com.rmr.ngusarov.criminalintent;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -7,10 +9,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -25,6 +30,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,6 +39,7 @@ import java.util.UUID;
 public class CrimeFragment extends Fragment {
 
     public static final String EXTRA_CRIME_ID = "com.rmr.ngusarov.criminalintent.crime_id";
+    private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 2;
     public static final String DIALOG_DATE = "date";
     public static final int REQUEST_DATE = 0;
     public static final int REQUEST_CONTACT = 1;
@@ -50,6 +57,9 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= 23) {
+            getPermissionToReadUserContacts();
+        }
 
         UUID crimeId = (UUID)getArguments().getSerializable(EXTRA_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
@@ -148,7 +158,7 @@ public class CrimeFragment extends Fragment {
         if (mCrime.getPhone() == null)
             mCallButton.setVisibility(View.INVISIBLE);
         else {
-            mCallButton.setText(mCrime.getPhone());
+            mCallButton.setText(getString(R.string.crime_call_text) + mCrime.getPhone());
             mCallButton.setVisibility(View.VISIBLE);
         }
         mCallButton.setOnClickListener(new View.OnClickListener() {
@@ -197,7 +207,7 @@ public class CrimeFragment extends Fragment {
             Log.d(CrimeListFragment.TAG, "new phone = " + phone);
             mCrime.setPhone(phone);
             if (phone != null) {
-                mCallButton.setText(phone);
+                mCallButton.setText(getString(R.string.crime_call_text) + phone);
                 mCallButton.setVisibility(View.VISIBLE);
             } else {
                 mCallButton.setText("");
@@ -283,6 +293,49 @@ public class CrimeFragment extends Fragment {
                 solvedString, suspectString);
 
         return reportString;
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public void getPermissionToReadUserContacts() {
+        // 1) Use the support library version ContextCompat.checkSelfPermission(...) to avoid
+        // checking the build version since Context.checkSelfPermission(...) is only available
+        // in Marshmallow
+        // 2) Always check for permission (even if permission has already been granted)
+        // since the user can revoke permissions at any time through Settings
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // The permission is NOT already granted.
+            // Check if the user has been asked about this permission already and denied
+            // it. If so, we want to give more explanation about why the permission is needed.
+            if (getActivity().shouldShowRequestPermissionRationale(
+                    Manifest.permission.READ_CONTACTS)) {
+                // Show our own UI to explain to the user why we need to read the contacts
+                // before actually requesting the permission and showing the default UI
+            }
+
+            // Fire off an async request to actually get the permission
+            // This will show the standard permission request dialog UI
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
+                    READ_CONTACTS_PERMISSIONS_REQUEST);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        // Make sure it's our original READ_CONTACTS request
+        if (requestCode == READ_CONTACTS_PERMISSIONS_REQUEST) {
+            if (grantResults.length == 1 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getActivity(), "Read Contacts permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), "Read Contacts permission denied", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     public void updateDateOnButton(Date d) {
