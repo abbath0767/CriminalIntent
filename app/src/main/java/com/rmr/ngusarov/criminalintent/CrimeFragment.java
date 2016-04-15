@@ -36,12 +36,15 @@ public class CrimeFragment extends Fragment {
     public static final String DIALOG_DATE = "date";
     public static final int REQUEST_DATE = 0;
     public static final int REQUEST_CONTACT = 1;
+    private Uri uriContact;
+    private String contactID;
 
     private EditText mEditText;
     private CheckBox mSolvedCheckBox;
     private Button mDateButton;
     private Button mReportButton;
     private Button mSuspectButton;
+    private Button mCallButton;
     private Crime mCrime;
 
     @Override
@@ -141,6 +144,21 @@ public class CrimeFragment extends Fragment {
             mSuspectButton.setEnabled(false);
         }
 
+        mCallButton = (Button) v.findViewById(R.id.crime_call_button);
+        if (mCrime.getPhone() == null)
+            mCallButton.setVisibility(View.INVISIBLE);
+        else {
+            mCallButton.setText(mCrime.getPhone());
+            mCallButton.setVisibility(View.VISIBLE);
+        }
+        mCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = "tel:" + mCrime.getPhone();
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(uri));
+                startActivity(intent);
+            }
+        });
 
         return v;
     }
@@ -152,23 +170,96 @@ public class CrimeFragment extends Fragment {
             Date d = (Date) data.getSerializableExtra(DateAndTimeDialog.EXTRA_DATE);
             mCrime.setDate(d);
             updateDateOnButton(d);
-        } else if (requestCode == REQUEST_CONTACT && data != null) {
-            Uri contactUri = data.getData();
-            String[] queryStringField = new String[] {ContactsContract.Contacts.DISPLAY_NAME};
-            Cursor cursor = getActivity().getContentResolver().query(contactUri, queryStringField, null, null, null);
-
-            try {
-                if (cursor == null)
-                    return;
-                cursor.moveToFirst();
-                String suspect = cursor.getString(0);
-                mCrime.setSuspect(suspect);
-                mSuspectButton.setText(suspect);
-            } finally {
-                 cursor.close();
+        } //else if (requestCode == REQUEST_CONTACT && data != null) {
+//            Uri contactUri = data.getData();
+//            String[] queryStringField = new String[] {ContactsContract.Contacts.DISPLAY_NAME};
+//            Cursor cursor = getActivity().getContentResolver().query(contactUri, queryStringField, null, null, null);
+//
+//            try {
+//                if (cursor == null)
+//                    return;
+//                cursor.moveToFirst();
+//                String suspect = cursor.getString(0);
+//                mCrime.setSuspect(suspect);
+//                mSuspectButton.setText(suspect);
+//            } finally {
+//                 cursor.close();
+//            }
+//        }
+        else if (requestCode == REQUEST_CONTACT && data != null) {
+            //TODO Chrome - add permmission 
+            uriContact = data.getData();
+            String name = getSuspectName();
+            mCrime.setSuspect(name);
+            mSuspectButton.setText(name);
+            //todo need debug with phone == null;
+            String phone = getSuspectNumber();
+            Log.d(CrimeListFragment.TAG, "new phone = " + phone);
+            mCrime.setPhone(phone);
+            if (phone != null) {
+                mCallButton.setText(phone);
+                mCallButton.setVisibility(View.VISIBLE);
+            } else {
+                mCallButton.setText("");
+                mCallButton.setVisibility(View.INVISIBLE);
             }
         }
 
+    }
+
+    private String getSuspectName() {
+        String contactName = null;
+
+        // querying contact data store
+        Cursor cursor = getActivity().getContentResolver().query(uriContact, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            // DISPLAY_NAME = The display name for the contact.
+            // HAS_PHONE_NUMBER =   An indicator of whether this contact has at least one phone number.
+            contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+        }
+
+        cursor.close();
+
+        Log.d(CrimeListFragment.TAG, "Contact Name: " + contactName);
+
+        return contactName;
+    }
+
+    private String getSuspectNumber() {
+        String contactNumber = null;
+        // getting contacts ID
+        Cursor cursorID = getActivity().getContentResolver().query(uriContact,
+                new String[]{ContactsContract.Contacts._ID},
+                null, null, null);
+
+        if (cursorID.moveToFirst()) {
+            contactID = cursorID.getString(cursorID.getColumnIndex(ContactsContract.Contacts._ID));
+        }
+
+        cursorID.close();
+
+        Log.d(CrimeListFragment.TAG, "Contact ID: " + contactID);
+
+        Cursor cursorPhone = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},
+
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
+                        ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
+                        ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,
+
+                new String[]{contactID},
+                null);
+
+        if (cursorPhone.moveToFirst()) {
+            contactNumber = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+        }
+
+        cursorPhone.close();
+
+        Log.d(CrimeListFragment.TAG, "Contact Phone Number (Mobile): " + contactNumber);
+
+        return contactNumber;
     }
 
     private String getCrimeReport() {
