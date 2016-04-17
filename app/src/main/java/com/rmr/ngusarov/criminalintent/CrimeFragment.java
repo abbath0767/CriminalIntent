@@ -8,10 +8,12 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
@@ -30,8 +32,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -43,6 +48,7 @@ public class CrimeFragment extends Fragment {
     public static final String DIALOG_DATE = "date";
     public static final int REQUEST_DATE = 0;
     public static final int REQUEST_CONTACT = 1;
+    public static final int REQUEST_PHOTO = 3;
     private Uri uriContact;
     private String contactID;
 
@@ -52,7 +58,10 @@ public class CrimeFragment extends Fragment {
     private Button mReportButton;
     private Button mSuspectButton;
     private Button mCallButton;
+    private ImageButton mPhotoButton;
+    private ImageView mPhotoView;
     private Crime mCrime;
+    private File mPhotoFile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,9 +72,9 @@ public class CrimeFragment extends Fragment {
 
         UUID crimeId = (UUID)getArguments().getSerializable(EXTRA_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
+        mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
 
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -158,7 +167,7 @@ public class CrimeFragment extends Fragment {
         if (mCrime.getPhone() == null)
             mCallButton.setVisibility(View.INVISIBLE);
         else {
-            mCallButton.setText(getString(R.string.crime_call_text) + mCrime.getPhone());
+            mCallButton.setText(getString(R.string.crime_call_text) + " " + mCrime.getPhone());
             mCallButton.setVisibility(View.VISIBLE);
         }
         mCallButton.setOnClickListener(new View.OnClickListener() {
@@ -167,6 +176,34 @@ public class CrimeFragment extends Fragment {
                 String uri = "tel:" + mCrime.getPhone();
                 Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(uri));
                 startActivity(intent);
+            }
+        });
+
+        mPhotoButton = (ImageButton) v.findViewById(R.id.crime_camera_image_button);
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        boolean canTakePhoto = mPhotoFile != null && captureImage.resolveActivity(packageManager) != null;
+        mPhotoButton.setEnabled(canTakePhoto);
+
+        if (canTakePhoto) {
+            Uri uri = Uri.fromFile(mPhotoFile);
+            captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        }
+
+        mPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(captureImage, REQUEST_PHOTO);
+            }
+        });
+
+        mPhotoView = (ImageView) v.findViewById(R.id.crime_photo_image_view);
+        updatePhotoView();
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getChildFragmentManager();
+                PictureFragment fragment = PictureFragment.newInstance(mPhotoFile.getPath());
+                fragment.show(fm, "myDialog");
             }
         });
 
@@ -207,12 +244,24 @@ public class CrimeFragment extends Fragment {
             Log.d(CrimeListFragment.TAG, "new phone = " + phone);
             mCrime.setPhone(phone);
             if (phone != null) {
-                mCallButton.setText(getString(R.string.crime_call_text) + phone);
+                mCallButton.setText(getString(R.string.crime_call_text) + " " + phone);
                 mCallButton.setVisibility(View.VISIBLE);
             } else {
                 mCallButton.setText("");
                 mCallButton.setVisibility(View.INVISIBLE);
             }
+        } else if (requestCode == REQUEST_PHOTO) {
+            updatePhotoView();
+        }
+
+    }
+
+    private void updatePhotoView() {
+        if (mPhotoFile == null || !mPhotoFile.exists())
+            mPhotoView.setImageDrawable(null);
+        else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
         }
 
     }

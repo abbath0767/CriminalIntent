@@ -21,6 +21,10 @@ public class Crime {
         mDate = new Date();
     }
 
+    public String getPhotoFilename() {
+        return "IMG_" + getId().toString() + ".jpg";
+    }
+
     public Date getDate() {return mDate;}
 
     public void setDate(Date date) {mDate = date;}
