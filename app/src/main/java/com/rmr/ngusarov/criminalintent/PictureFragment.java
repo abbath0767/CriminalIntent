@@ -10,6 +10,8 @@ import android.widget.ImageView;
 
 import java.io.File;
 
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 public class PictureFragment extends DialogFragment {
     public static final String EXTRA_PHOTO_FILE = "com.rmr.ngusarov.picture_file_photo";
 
@@ -17,6 +19,7 @@ public class PictureFragment extends DialogFragment {
 
     private String mPhotoPath;
     private File mPhotoFile;
+    private PhotoViewAttacher mAttacher;
 
 
     @Override
@@ -34,6 +37,8 @@ public class PictureFragment extends DialogFragment {
         mImageView = (ImageView) view.findViewById(R.id.dialog_photo_image_view);
         Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoPath, getActivity());
         mImageView.setImageBitmap(bitmap);
+
+        mAttacher = new PhotoViewAttacher(mImageView);
 
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
