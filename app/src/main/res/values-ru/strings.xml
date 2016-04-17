@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CriminalIntent</string>
+    <string name="crime_tittle_hint">Введите название преступления!</string>
+    <string name="title_activity_crime">Преступления</string>
+    <string name="crime_tittle_label">Название</string>
+    <string name="crime_detals_label">Подробно</string>
+    <string name="crime_solved_label">Решено</string>
+    <string name="crimes_title">Список преступлений</string>
+    <string name="date_picker_title">Дата и время преступления</string>
+    <string name="button_dialog_ok">OK</string>
+    <string name="new_crime">Новое преступление</string>
+    <string name="show_subtitle">Показать субтитл</string>
+    <string name="hide_subtitle">Скрыть субтитл</string>
+    <string name="subtitle">Субтитл.</string>
+    <string name="delete_crime">Удалить</string>
+    <string name="empty_list">Список преступлений пуст. Добавьте новое</string>
+
+    <string name="crime_suspect_text">Выбрать подозреваемого</string>
+    <string name="crime_report_text">Отправить отчет</string>
+    <string name="crime_report">%1$s!
+    Преступление совершено %2$s. %3$s, и %4$s</string>
+    <string name="crime_report_solved">Преступление решено в </string>
+    <string name="crime_report_unsolved">Преступление не разрешено</string>
+    <string name="crime_report_no_suspect">, подозреваемого нет.</string>
+    <string name="crime_report_suspect">подозреваемый %s.</string>
+    <string name="crime_report_subject">CriminalIntent отчет о преступлении</string>
+    <string name="send_report">Отправить отчет с помощью…</string>
+    <string name="crime_call_text">Позвонить </string>
+</resources>
