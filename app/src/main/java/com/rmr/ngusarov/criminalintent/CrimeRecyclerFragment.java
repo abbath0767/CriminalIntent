@@ -1,7 +1,7 @@
 package com.rmr.ngusarov.criminalintent;
 
+import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 public class CrimeRecyclerFragment extends Fragment{
     private RecyclerView mRecyclerView;
     private CrimeAdapter mCrimeAdapter;
+    private Callbacks mCallbacks;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,9 +62,11 @@ public class CrimeRecyclerFragment extends Fragment{
             case R.id.menu_item_new_crime:
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
-                Intent i = new Intent(getActivity(), CrimePagerActivity.class);
-                i.putExtra(CrimePagerActivity.EXTRA_CRIME_ID, crime.getId());
-                startActivityForResult(i, 0);
+//                Intent i = new Intent(getActivity(), CrimePagerActivity.class);
+//                i.putExtra(CrimePagerActivity.EXTRA_CRIME_ID, crime.getId());
+//                startActivityForResult(i, 0);
+                updateUi();
+                mCallbacks.onCrimeSelected(crime);
                 return true;
             case R.id.menu_item_show_subtitle:
                 if (((AppCompatActivity) getActivity()).getSupportActionBar().getSubtitle() == null) {
@@ -79,7 +82,7 @@ public class CrimeRecyclerFragment extends Fragment{
         }
     }
 
-    private void updateUi() {
+    public void updateUi() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         ArrayList<Crime> mCrimes = crimeLab.getCrimes();
         Log.d(CrimeListFragment.TAG, "update UI mCrimes = " + mCrimes.size());
@@ -118,8 +121,9 @@ public class CrimeRecyclerFragment extends Fragment{
 
         @Override
         public void onClick(View v) {
-            Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
-            startActivity(intent);
+//            Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
+//            startActivity(intent);
+            mCallbacks.onCrimeSelected(mCrime);
         }
     }
 
@@ -153,5 +157,21 @@ public class CrimeRecyclerFragment extends Fragment{
         public void setCrimes(ArrayList<Crime> crimes) {
             mCrimes = crimes;
         }
+    }
+
+    public interface Callbacks {
+        void onCrimeSelected(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 }
